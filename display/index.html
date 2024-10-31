@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>RetroGuruMessaging</title>
+    <link href="https://fonts.cdnfonts.com/css/topaz-new" rel="stylesheet" />
+    <style>
+      body {
+        background: #000000;
+        color: #ff0000;
+        font-family: "Topaz New", sans-serif;
+      }
+
+      #guru {
+        display: none;
+        border: 0.5em #ff0000 solid;
+        text-align: center;
+        padding: 0;
+        animation: 1s infinite alternate blink;
+      }
+
+      #msg {
+        padding-left: 1em;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          border-color: #ff0000;
+        }
+
+        50.1%,
+        100% {
+          border-color: #000000;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
+    <script>
+      async function setup() {
+        const ably = new Ably.Realtime(
+          "Qe_VSw.679UHA:kI_3XQifSrqiEQBXdkHRZqPeuDJ9dMkjnFMHLle34Zo"
+        );
+        ably.connection.once("connected", () => {
+          console.log("Connected to Ably!");
+        });
+
+        const channel = ably.channels.get("guru");
+        await channel.subscribe("alert", (message) => {
+          console.log("Message received: " + message.data);
+          const msg = document.getElementById("msg");
+          const guru = document.getElementById("guru")
+          msg.innerText = message.data;
+          guru.style.display = "block";
+        });
+
+        await channel.subscribe("clear", () => {
+          console.log("Clearing display!");
+          const guru = document.getElementById("guru")
+          guru.style.display = "none";
+        });
+      }
+
+      setup();
+    </script>
+
+    <div id="guru">
+      <p>Streamware Failure. <span id="msg">---</span></p>
+      <p>Guru Musication #00000000.00000000</p>
+    </div>
+  </body>
+</html>

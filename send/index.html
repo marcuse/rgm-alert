@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
+<script>
+  let ably = null;
+
+  async function setup() {
+    const apiKey = document.getElementById("api_key");
+    ably = new Ably.Realtime(apiKey.value);
+    ably.connection.once("connected", () => {
+      console.log("Connected to Ably!");
+      const connect = document.getElementById("connect");
+      const main = document.getElementById("main");
+      connect.style.display = "none";
+      main.style.display = "block";
+    });
+  }
+
+  async function sendAlert() {
+    const msg = document.getElementById("msg");
+    const result = document.getElementById("result");
+    const channel = ably.channels.get("guru");
+    channel.publish("alert", msg.value, (err) => {
+      if (err) result.innerText = err;
+      else {
+        result.innerText = "Sent!";
+      }
+    });
+  }
+
+  async function sendClear() {
+    const channel = ably.channels.get("guru");
+    channel.publish("clear", "");
+  }
+
+  setup();
+</script>
+
+<body>
+  <fieldset id="connect">
+    <input id="api_key" name="api_key" type="text" />
+    <button onclick="setup()">Connect</button>
+  </fieldset>
+
+  <fieldset id="main" style="display: none">
+    <input id="msg" name="msg" type="text" />
+    <button onclick="sendAlert()">Alert</button>
+    <div id="result"></div>
+
+    <button onclick="sendClear()">Clear</button>
+  </fieldset>
+</body>

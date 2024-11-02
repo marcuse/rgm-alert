@@ -5,13 +5,18 @@
 
   async function setup() {
     const apiKey = document.getElementById("api_key");
-    ably = new Ably.Realtime(apiKey.value);
+    connect(apiKey.value);
+  }
+
+  async function connect(key) {
+    ably = new Ably.Realtime(key);
     ably.connection.once("connected", () => {
       console.log("Connected to Ably!");
       const connect = document.getElementById("connect");
       const main = document.getElementById("main");
       connect.style.display = "none";
       main.style.display = "block";
+      localStorage.setItem("apiKey", key);
     });
   }
 
@@ -37,7 +42,15 @@
     channel.publish("reload", "");
   }
 
-  setup();
+  async function resetAPIKey() {
+    localStorage.removeItem("apiKey");
+  }
+
+  let key;
+  if (key = localStorage.getItem("apiKey")) {
+    connect(key)
+  }
+
 </script>
 
 <body>
@@ -53,5 +66,9 @@
 
     <button onclick="sendClear()">Clear</button>
     <button onclick="sendReload()">Reload</button>
+  </fieldset>
+
+  <fieldset>
+    <button onclick="resetAPIKey()">Reset API Key</button>
   </fieldset>
 </body>

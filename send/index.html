@@ -5,60 +5,61 @@
     <title>RetroGuruMessaging - Send</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
-  <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
-  <script>
-    let ably = null;
-
-    async function setup() {
-      const apiKey = document.getElementById("api_key");
-      connect(apiKey.value);
-    }
-
-    async function connect(key) {
-      ably = new Ably.Realtime(key);
-      ably.connection.once("connected", () => {
-        console.log("Connected to Ably!");
-        const connect = document.getElementById("connect");
-        const main = document.getElementById("main");
-        connect.style.display = "none";
-        main.style.display = "block";
-        localStorage.setItem("apiKey", key);
-      });
-    }
-
-    async function sendAlert() {
-      const msg = document.getElementById("msg");
-      const result = document.getElementById("result");
-      const channel = ably.channels.get("guru");
-      channel.publish("alert", msg.value, (err) => {
-        if (err) result.innerText = err;
-        else {
-          result.innerText = "Sent!";
-        }
-      });
-    }
-
-    async function sendClear() {
-      const channel = ably.channels.get("guru");
-      channel.publish("clear", "");
-    }
-
-    async function sendReload() {
-      const channel = ably.channels.get("guru");
-      channel.publish("reload", "");
-    }
-
-    async function resetAPIKey() {
-      localStorage.removeItem("apiKey");
-    }
-
-    let key;
-    if ((key = localStorage.getItem("apiKey"))) {
-      connect(key);
-    }
-  </script>
 
   <body>
+    <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
+    <script>
+      let ably = null;
+
+      async function setup() {
+        const apiKey = document.getElementById("api_key");
+        connect(apiKey.value);
+      }
+
+      async function connect(key) {
+        ably = new Ably.Realtime(key);
+        ably.connection.once("connected", () => {
+          console.log("Connected to Ably!");
+          const connect = document.getElementById("connect");
+          const main = document.getElementById("main");
+          connect.style.display = "none";
+          main.style.display = "block";
+          localStorage.setItem("apiKey", key);
+        });
+      }
+
+      async function sendAlert() {
+        const msg = document.getElementById("msg");
+        const result = document.getElementById("result");
+        const channel = ably.channels.get("guru");
+        channel.publish("alert", msg.value, (err) => {
+          if (err) result.innerText = err;
+          else {
+            result.innerText = "Sent!";
+          }
+        });
+      }
+
+      async function sendClear() {
+        const channel = ably.channels.get("guru");
+        channel.publish("clear", "");
+      }
+
+      async function sendReload() {
+        const channel = ably.channels.get("guru");
+        channel.publish("reload", "");
+      }
+
+      async function resetAPIKey() {
+        localStorage.removeItem("apiKey");
+      }
+
+      let key;
+      if ((key = localStorage.getItem("apiKey"))) {
+        connect(key);
+      }
+    </script>
+
     <fieldset id="connect">
       <input id="api_key" name="api_key" type="text" />
       <button onclick="setup()">Connect</button>

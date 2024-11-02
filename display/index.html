@@ -42,6 +42,9 @@
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
       async function setup() {
+        const hexyTimestamp = () =>
+          Math.ceil(Date.now() / 1000).toString(16).toUpperCase();
+
         const ably = new Ably.Realtime(
           "Qe_VSw.679UHA:kI_3XQifSrqiEQBXdkHRZqPeuDJ9dMkjnFMHLle34Zo"
         );
@@ -53,8 +56,10 @@
         await channel.subscribe("alert", (message) => {
           console.log("Message received: " + message.data);
           const msg = document.getElementById("msg");
+          const ts = document.getElementById("ts");
           const guru = document.getElementById("guru");
           msg.innerText = message.data;
+          ts.innerText = hexyTimestamp();
           guru.style.display = "block";
         });
 
@@ -75,7 +80,7 @@
 
     <div id="guru">
       <p>Streamware Failure. <span id="msg">---</span></p>
-      <p>Guru Musication #00000000.00000000</p>
+      <p>Guru Musication #00000004.<span id="ts">00000000</span></p>
     </div>
   </body>
 </html>

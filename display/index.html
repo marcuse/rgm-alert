@@ -63,6 +63,11 @@
           const guru = document.getElementById("guru");
           guru.style.display = "none";
         });
+
+        await channel.subscribe("reload", () => {
+          console.log("Reloading!");
+          window.location.reload();
+        });
       }
 
       setup();

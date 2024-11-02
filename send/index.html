@@ -32,6 +32,11 @@
     channel.publish("clear", "");
   }
 
+  async function sendReload() {
+    const channel = ably.channels.get("guru");
+    channel.publish("reload", "");
+  }
+
   setup();
 </script>
 
@@ -47,5 +52,6 @@
     <div id="result"></div>
 
     <button onclick="sendClear()">Clear</button>
+    <button onclick="sendReload()">Reload</button>
   </fieldset>
 </body>

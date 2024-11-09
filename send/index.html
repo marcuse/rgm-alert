@@ -3,7 +3,39 @@
   <head>
     <meta charset="utf-8" />
     <title>RetroGuruMessaging - Send</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <style>
+      button {
+        padding: 0.5em;
+      }
+
+      #btnAlert {
+        background: #ff0000;
+        color: #ffffff;
+      }
+
+      #btnClear {
+        background: #00ff00;
+        color: #000000;
+      }
+
+      section {
+        display: flex;
+        gap: 0.5em;
+        margin: 0.5em;
+
+        button {
+          flex-grow: 1;
+        }
+
+        input {
+          flex-grow: 3;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -28,16 +60,20 @@
         });
       }
 
-      async function sendAlert() {
-        const msg = document.getElementById("msg");
-        const result = document.getElementById("result");
+      async function sendAlert(msg) {
         const channel = ably.channels.get("guru");
-        channel.publish("alert", msg.value, (err) => {
+        channel.publish("alert", msg, (err) => {
+          console.log("doink!");
           if (err) result.innerText = err;
           else {
             result.innerText = "Sent!";
           }
         });
+      }
+
+      async function sendCustomAlert() {
+        const msg = document.getElementById("msg");
+        sendAlert(msg.value);
       }
 
       async function sendClear() {
@@ -66,16 +102,30 @@
     </fieldset>
 
     <fieldset id="main" style="display: none">
-      <input id="msg" name="msg" type="text" />
-      <button onclick="sendAlert()">Alert</button>
-      <div id="result"></div>
-
-      <button onclick="sendClear()">Clear</button>
-      <button onclick="sendReload()">Reload</button>
+      <section>
+        <input id="msg" name="msg" type="text" />
+        <button onclick="sendCustomAlert()" id="btnAlert">Alert</button>
+      </section>
+      <section>
+        <button onclick="sendClear()" id="btnClear">Clear</button>
+      </section>
+      <section>
+        <button onclick="sendAlert('Mic Check')">Mic Check</button>
+        <button onclick="sendAlert('Echo! Echo. echo...')">Echo</button>
+        <button onclick="sendAlert('Break Time!')">Break</button>
+      </section>
     </fieldset>
 
-    <fieldset>
-      <button onclick="resetAPIKey()">Reset API Key</button>
-    </fieldset>
+    <div id="result"></div>
+
+    <details>
+      <summary>Magic stuff</summary>
+      <fieldset>
+        <section>
+          <button onclick="sendReload()">Reload</button>
+          <button onclick="resetAPIKey()">Reset API Key</button>
+        </section>
+      </fieldset>
+    </details>
   </body>
 </html>

@@ -41,9 +41,13 @@
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
+      let clearMaxTimeout = null;
+
       async function setup() {
         const hexyTimestamp = () =>
-          Math.ceil(Date.now() / 1000).toString(16).toUpperCase();
+          Math.ceil(Date.now() / 1000)
+            .toString(16)
+            .toUpperCase();
 
         const ably = new Ably.Realtime(
           "Qe_VSw.679UHA:kI_3XQifSrqiEQBXdkHRZqPeuDJ9dMkjnFMHLle34Zo"
@@ -61,18 +65,37 @@
           msg.innerText = message.data;
           ts.innerText = hexyTimestamp();
           guru.style.display = "block";
+          startClearTimeout();
         });
 
         await channel.subscribe("clear", () => {
           console.log("Clearing display!");
-          const guru = document.getElementById("guru");
-          guru.style.display = "none";
+          clear();
         });
 
         await channel.subscribe("reload", () => {
           console.log("Reloading!");
           window.location.reload();
         });
+      }
+
+      function clear() {
+        const guru = document.getElementById("guru");
+        guru.style.display = "none";
+      }
+
+      function startClearTimeout() {
+        stopClearTimeout();
+        clearMaxTimeout = setTimeout(() => {
+          clear();
+          stopClearTimeout();
+        }, 5 * 60 * 1000);
+      }
+
+      function stopClearTimeout() {
+        if (!clearMaxTimeout) return;
+        clearTimeout(clearMaxTimeout);
+        clearMaxTimeout = null;
       }
 
       setup();

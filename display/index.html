@@ -5,15 +5,19 @@
     <title>RetroGuruMessaging</title>
     <link href="https://fonts.cdnfonts.com/css/topaz-new" rel="stylesheet" />
     <style>
+      :root {
+        --guru-color: #ff0000;
+      }
+
       body {
         background: #000000;
-        color: #ff0000;
+        color: var(--guru-color);
         font-family: "Topaz New", sans-serif;
       }
 
       #guru {
         display: none;
-        border: 0.5em #ff0000 solid;
+        border: 0.5em var(--guru-color) solid;
         background: #010101;
         text-align: center;
         padding: 0;
@@ -27,7 +31,7 @@
       @keyframes blink {
         0%,
         50% {
-          border-color: #ff0000;
+          border-color: var(--guru-color);
         }
 
         50.1%,
@@ -42,6 +46,7 @@
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
       let clearMaxTimeout = null;
+      const channelName = "guru";
 
       async function setup() {
         const hexyTimestamp = () =>
@@ -56,14 +61,19 @@
           console.log("Connected to Ably!");
         });
 
-        const channel = ably.channels.get("guru");
+        const channel = ably.channels.get(channelName);
         await channel.subscribe("alert", (message) => {
-          console.log("Message received: " + message.data);
+          console.log(`Message received: ${message.data.msg} (${message.data.type})`);
           const msg = document.getElementById("msg");
           const ts = document.getElementById("ts");
           const guru = document.getElementById("guru");
-          msg.innerText = message.data;
+          msg.innerText = message.data.msg;
           ts.innerText = hexyTimestamp();
+          let color = "#ff0000";
+          if (message.data.type == "recoverable") {
+            color = "#ffcc00";
+          }
+          document.documentElement.style.setProperty("--guru-color", color);
           guru.style.display = "block";
           startClearTimeout();
         });

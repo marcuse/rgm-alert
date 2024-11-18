@@ -51,6 +51,7 @@
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
       let ably = null;
+      const channelName = "guru";
 
       async function setup() {
         const apiKey = document.getElementById("api_key");
@@ -69,29 +70,26 @@
         });
       }
 
-      async function sendAlert(msg) {
-        const channel = ably.channels.get("guru");
-        channel.publish("alert", msg, (err) => {
-          console.log("doink!");
-          if (err) result.innerText = err;
-          else {
-            result.innerText = "Sent!";
-          }
+      async function sendAlert(msg, type) {
+        const channel = ably.channels.get(channelName);
+        channel.publish("alert", { msg, type }, (err) => {
+          console.log("doink!", err);
         });
       }
 
       async function sendCustomAlert() {
         const msg = document.getElementById("msg");
-        sendAlert(msg.value);
+        const type = document.getElementById("type");
+        sendAlert(msg.value, type.value);
       }
 
       async function sendClear() {
-        const channel = ably.channels.get("guru");
+        const channel = ably.channels.get(channelName);
         channel.publish("clear", "");
       }
 
       async function sendReload() {
-        const channel = ably.channels.get("guru");
+        const channel = ably.channels.get(channelName);
         channel.publish("reload", "");
       }
 
@@ -113,15 +111,19 @@
     <fieldset id="main" style="display: none">
       <section>
         <input id="msg" name="msg" type="text" />
+        <select id="type" name="type">
+          <option value="fatal">Fatal</option>
+          <option value="recoverable">Recoverable</option>
+        </select>
         <button onclick="sendCustomAlert()" id="btnAlert">Alert</button>
       </section>
       <section>
         <button onclick="sendClear()" id="btnClear">Clear</button>
       </section>
       <section>
-        <button onclick="sendAlert('Mic Check')">Mic Check</button>
-        <button onclick="sendAlert('Echo! Echo. echo...')">Echo</button>
-        <button onclick="sendAlert('Break Time!')">Break</button>
+        <button onclick="sendAlert('Mic Check', 'fatal')">Mic Check</button>
+        <button onclick="sendAlert('Echo! Echo. echo...', 'fatal')">Echo</button>
+        <button onclick="sendAlert('Break Time!', 'recoverable')">Break</button>
       </section>
     </fieldset>
 

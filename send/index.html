@@ -13,6 +13,10 @@
         margin: 1em auto;
       }
 
+      h1 {
+        font-size: 120%;
+      }
+
       button {
         padding: 0.5em;
       }
@@ -50,11 +54,12 @@
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
+      const version = { major: 2, minor: 1 };
       let ably = null;
       const channelName = "guru";
 
       async function setup() {
-        const apiKey = document.getElementById("api_key");
+        const apiKey = document.getElementById("api_key[]");
         connect(apiKey.value);
       }
 
@@ -103,6 +108,10 @@
       }
     </script>
 
+    <header>
+      <h1>RGM Alert <small id="version">x.x</small></h1>
+    </header>
+
     <fieldset id="connect">
       <input id="api_key" name="api_key" type="text" />
       <button onclick="setup()">Connect</button>
@@ -122,7 +131,9 @@
       </section>
       <section>
         <button onclick="sendAlert('Mic Check', 'fatal')">Mic Check</button>
-        <button onclick="sendAlert('Echo! Echo. echo...', 'fatal')">Echo</button>
+        <button onclick="sendAlert('Echo! Echo. echo...', 'fatal')">
+          Echo
+        </button>
         <button onclick="sendAlert('Break Time!', 'recoverable')">Break</button>
       </section>
     </fieldset>
@@ -138,5 +149,11 @@
         </section>
       </fieldset>
     </details>
+
+    <script>
+      document.getElementById(
+        "version"
+      ).innerText = `${version.major}.${version.minor}`;
+    </script>
   </body>
 </html>

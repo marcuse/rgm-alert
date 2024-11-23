@@ -45,6 +45,7 @@
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
+      const version = { major: 2, minor: 1 };
       let clearMaxTimeout = null;
       const channelName = "guru";
 
@@ -63,11 +64,17 @@
 
         const channel = ably.channels.get(channelName);
         await channel.subscribe("alert", (message) => {
-          console.log(`Message received: ${message.data.msg} (${message.data.type})`);
+          console.log(
+            `Message received: ${message.data.msg} (${message.data.type})`
+          );
           const msg = document.getElementById("msg");
+          const ver = document.getElementById("version");
           const ts = document.getElementById("ts");
           const guru = document.getElementById("guru");
           msg.innerText = message.data.msg;
+          ver.innerText =
+            String(version.major).padStart(5, "0") +
+            String(version.minor).padStart(3, "0");
           ts.innerText = hexyTimestamp();
           let color = "#ff0000";
           if (message.data.type == "recoverable") {
@@ -113,7 +120,11 @@
 
     <div id="guru">
       <p>Streamware Failure. <span id="msg">---</span></p>
-      <p>Guru Musication #00000004.<span id="ts">00000000</span></p>
+      <p>
+        Guru Musication #<span id="version">00000000</span>.<span id="ts"
+          >00000000</span
+        >
+      </p>
     </div>
   </body>
 </html>

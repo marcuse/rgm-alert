@@ -48,6 +48,13 @@
       details {
         padding: 0.5em 0;
       }
+
+      #log {
+        .time {
+          text-align: right;
+          color: #888888;
+        }
+      }
     </style>
   </head>
 
@@ -59,12 +66,12 @@
       const channelName = "guru";
 
       async function setup() {
-        const apiKey = document.getElementById("api_key[]");
+        const apiKey = document.getElementById("api_key");
         connect(apiKey.value);
       }
 
       async function connect(key) {
-        ably = new Ably.Realtime(key);
+        ably = new Ably.Realtime({ key });
         ably.connection.once("connected", () => {
           console.log("Connected to Ably!");
           const connect = document.getElementById("connect");
@@ -73,9 +80,39 @@
           main.style.display = "block";
           localStorage.setItem("apiKey", key);
         });
+
+        setupSubscription();
+      }
+
+      async function setupSubscription() {
+        const channel = ably.channels.get(channelName);
+        await channel.subscribe("alert", (message) => {
+          addLog("alert", JSON.stringify(message.data));
+        });
+        await channel.subscribe("clear", (message) => {
+          addLog("clear", "");
+        });
+        await channel.subscribe("reload", (message) => {
+          addLog("reload", "");
+        });
+      }
+
+      function addLog(type, line) {
+        const log = document.getElementById("log");
+        const row = document.createElement("tr");
+        const now = new Date();
+        const time =
+          String(now.getHours()) +
+          ":" +
+          String(now.getMinutes()).padStart(2, "0") +
+          ":" +
+          String(now.getSeconds()).padStart(2, "0");
+        row.innerHTML = `<td class="time">${time}</td><td>${type}</td><td>${line}</td>`;
+        log.insertBefore(row, log.firstChild);
       }
 
       async function sendAlert(msg, type) {
+        addLog("sending", "");
         const channel = ably.channels.get(channelName);
         channel.publish("alert", { msg, type }, (err) => {
           console.log("doink!", err);
@@ -138,8 +175,6 @@
       </section>
     </fieldset>
 
-    <div id="result"></div>
-
     <details>
       <summary>Magic stuff</summary>
       <fieldset>
@@ -149,6 +184,10 @@
         </section>
       </fieldset>
     </details>
+
+    <section id="logView">
+      <table id="log"></table>
+    </section>
 
     <script>
       document.getElementById(

@@ -61,7 +61,7 @@
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
-      const version = { major: 2, minor: 1 };
+      const version = { major: 2, minor: 2 };
       let ably = null;
       const channelName = "guru";
 
@@ -160,6 +160,7 @@
         <select id="type" name="type">
           <option value="fatal">Fatal</option>
           <option value="recoverable">Recoverable</option>
+          <option value="shiny">Shiny</option>
         </select>
         <button onclick="sendCustomAlert()" id="btnAlert">Alert</button>
       </section>

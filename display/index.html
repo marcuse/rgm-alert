@@ -28,6 +28,12 @@
         padding-left: 1em;
       }
 
+      .shiny {
+        font-size: 150%;
+        text-shadow: 0 0 8px #ffff00;
+        animation: 1s infinite alternate pulse;
+      }
+
       @keyframes blink {
         0%,
         50% {
@@ -39,13 +45,25 @@
           border-color: #000000;
         }
       }
+
+      @keyframes pulse {
+        0% {
+          color: #ffffff;
+          text-shadow: 0 0 8px #ffff00;
+        }
+
+        100% {
+          color: #ffff00;
+          text-shadow: 0 0 8px #000000;
+        }
+      }
     </style>
   </head>
 
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
-      const version = { major: 2, minor: 1 };
+      const version = { major: 2, minor: 2 };
       let clearMaxTimeout = null;
       const channelName = "guru";
 
@@ -80,6 +98,10 @@
           if (message.data.type == "recoverable") {
             color = "#ffcc00";
           }
+          if (message.data.type == "shiny") {
+            color = "#ffffff";
+            shinify(msg, message.data.msg);
+          }
           document.documentElement.style.setProperty("--guru-color", color);
           guru.style.display = "block";
           startClearTimeout();
@@ -113,6 +135,15 @@
         if (!clearMaxTimeout) return;
         clearTimeout(clearMaxTimeout);
         clearMaxTimeout = null;
+      }
+
+      function shinify(element, msg) {
+        let shinyMsg = "";
+        console.log(msg);
+        for (let c of msg) {
+          shinyMsg += "<span class='shiny' style='animation-duration: " + (Math.random() + 0.5) + "s'>" + c + "</span>";
+        }
+        element.innerHTML = shinyMsg;
       }
 
       setup();

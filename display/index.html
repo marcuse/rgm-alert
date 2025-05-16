@@ -104,10 +104,6 @@
           }
           document.documentElement.style.setProperty("--guru-color", color);
           guru.style.display = "block";
-
-          const trekAlerts = {"fatal": "Red", "recoverable": "Yellow", "shiny": "Shiny"};
-          document.getElementById("trek").innerText = trekAlerts[message.data.type];
-
           startClearTimeout();
         });
 
@@ -154,12 +150,9 @@
     </script>
 
     <div id="guru">
-      <div style="display: flex; justify-content: center; align-items: center; gap: 2em; padding-top: 1em;">
-        <div>❙❙❙❚ ALERT ❚❙❙❙<br>Condition: <span id="trek">Red</span></div>
-        <div><span id="msg">---</span></div>
-      </div>
+      <p>Streamware Failure. <span id="msg">---</span></p>
       <p>
-        LCARS - Stardate <span id="version">00000000</span>.<span id="ts"
+        Guru Musication #<span id="version">00000000</span>.<span id="ts"
           >00000000</span
         >
       </p>

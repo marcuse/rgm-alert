@@ -63,7 +63,7 @@
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
-      const version = { major: 2, minor: 2 };
+      const version = { major: 2, minor: 3 };
       let clearMaxTimeout = null;
       const channelName = "guru";
 
@@ -101,6 +101,9 @@
           if (message.data.type == "shiny") {
             color = "#ffffff";
             shinify(msg, message.data.msg);
+          }
+          if (message.data.type == "custom") {
+            color = message.data.color;
           }
           document.documentElement.style.setProperty("--guru-color", color);
           guru.style.display = "block";
@@ -141,7 +144,12 @@
         let shinyMsg = "";
         console.log(msg);
         for (let c of msg) {
-          shinyMsg += "<span class='shiny' style='animation-duration: " + (Math.random() + 0.5) + "s'>" + c + "</span>";
+          shinyMsg +=
+            "<span class='shiny' style='animation-duration: " +
+            (Math.random() + 0.5) +
+            "s'>" +
+            c +
+            "</span>";
         }
         element.innerHTML = shinyMsg;
       }

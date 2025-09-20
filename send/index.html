@@ -61,7 +61,7 @@
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
-      const version = { major: 2, minor: 2 };
+      const version = { major: 2, minor: 3 };
       let ably = null;
       const channelName = "guru";
 
@@ -111,10 +111,18 @@
         log.insertBefore(row, log.firstChild);
       }
 
-      async function sendAlert(msg, type) {
+      function typeChange() {
+        const type = document.getElementById("type");
+        const color = document.getElementById("color");
+        color.style.display = type.value === "custom" ? "inline" : "none";
+      }
+
+      async function sendAlert(msg, type, color) {
         addLog("sending", "");
         const channel = ably.channels.get(channelName);
-        channel.publish("alert", { msg, type }, (err) => {
+        const payload = { msg, type };
+        if (color) payload.color = color;
+        channel.publish("alert", payload, (err) => {
           console.log("doink!", err);
         });
       }
@@ -122,7 +130,9 @@
       async function sendCustomAlert() {
         const msg = document.getElementById("msg");
         const type = document.getElementById("type");
-        sendAlert(msg.value, type.value);
+        const color = document.getElementById("color");
+        const colorValue = type.value === "custom" ? color.value : null;
+        sendAlert(msg.value, type.value, colorValue);
       }
 
       async function sendClear() {
@@ -143,6 +153,10 @@
       if ((key = localStorage.getItem("apiKey"))) {
         connect(key);
       }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        typeChange();
+      });
     </script>
 
     <header>
@@ -157,11 +171,13 @@
     <fieldset id="main" style="display: none">
       <section>
         <input id="msg" name="msg" type="text" />
-        <select id="type" name="type">
+        <select id="type" name="type" onchange="typeChange()">
           <option value="fatal">Fatal</option>
           <option value="recoverable">Recoverable</option>
           <option value="shiny">Shiny</option>
+          <option value="custom">Custom</option>
         </select>
+        <input type="color" id="color" style="display: none" />
         <button onclick="sendCustomAlert()" id="btnAlert">Alert</button>
       </section>
       <section>

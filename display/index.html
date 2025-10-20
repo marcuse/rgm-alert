@@ -57,13 +57,30 @@
           text-shadow: 0 0 8px #000000;
         }
       }
+
+      #guru.type-pac-man #guru-inner {
+        background-image: url("assets/pmbg.png");
+        background-size: 10px;
+        background-position: center;
+        animation: 10s ease-in-out infinite alternate pm-throb;
+      }
+
+      @keyframes pm-throb {
+        0% {
+          background-size: 10px;
+        }
+
+        100% {
+          background-size: 47px;
+        }
+      }
     </style>
   </head>
 
   <body>
     <script src="https://cdn.ably.com/lib/ably.min-2.js"></script>
     <script>
-      const version = { major: 2, minor: 3 };
+      const version = { major: 2, minor: 4 };
       let clearMaxTimeout = null;
       const channelName = "guru";
 
@@ -102,11 +119,15 @@
             color = "#ffffff";
             shinify(msg, message.data.msg);
           }
+          if (message.data.type == "pac-man") {
+            color = "#faf200";
+          }
           if (message.data.type == "custom") {
             color = message.data.color;
           }
           document.documentElement.style.setProperty("--guru-color", color);
           guru.style.display = "block";
+          guru.className = "type-" + message.data.type;
           startClearTimeout();
         });
 
@@ -158,12 +179,14 @@
     </script>
 
     <div id="guru">
-      <p>Streamware Failure. <span id="msg">---</span></p>
-      <p>
-        Guru Musication #<span id="version">00000000</span>.<span id="ts"
-          >00000000</span
-        >
-      </p>
+      <div id="guru-inner">
+        <p>Streamware Failure. <span id="msg">---</span></p>
+        <p>
+          Guru Musication #<span id="version">00000000</span>.<span id="ts"
+            >00000000</span
+          >
+        </p>
+      </div>
     </div>
   </body>
 </html>
